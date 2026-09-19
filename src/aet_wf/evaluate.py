@@ -1,4 +1,4 @@
-"""Calibration, prediction artifacts, and label-set scoring for AET-WF."""
+"""Calibration, prediction artifacts, and label-set scoring for PGT."""
 
 from __future__ import annotations
 
@@ -383,7 +383,7 @@ def score(
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Score a frozen AET-WF prediction artifact")
+    parser = argparse.ArgumentParser(description="Score a frozen PGT prediction artifact")
     parser.add_argument("prediction", type=Path)
     parser.add_argument("source_npz", type=Path)
     parser.add_argument("--output", type=Path)

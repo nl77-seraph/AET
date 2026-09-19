@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Read-only full audit of the two generated AET-WF data protocols."""
+"""Read-only full audit of the two generated PGT data protocols."""
 
 from __future__ import annotations
 

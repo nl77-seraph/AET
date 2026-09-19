@@ -1,4 +1,4 @@
-"""Prepare single-tab anchors and train AET with optional torchrun DDP.
+"""Prepare single-tab anchors and train PGT with optional torchrun DDP.
 
 Run with ``python -m aet_wf.train prepare ...`` or ``... fit ...``.
 Neither command accepts a test split.
@@ -67,7 +67,7 @@ def parse_args() -> argparse.Namespace:
     fit.add_argument("--output-dir", type=Path, required=True)
     fit.add_argument("--prepared", type=Path)
     fit.add_argument("--anchor-train", type=Path)
-    fit.add_argument("--no-anchor", action="store_true", help="AET ablation: random encoder/prototypes and no single-site supervision")
+    fit.add_argument("--no-anchor", action="store_true", help="PGT ablation: random encoder/prototypes and no single-site supervision")
     fit.add_argument("--resume", type=Path)
     fit.add_argument("--epochs", type=int, default=100)
     fit.add_argument("--batch-size", type=int, default=64)
@@ -114,15 +114,15 @@ def parse_args() -> argparse.Namespace:
     if args.command == "fit" and args.method == "aet" and not args.no_anchor and (
         args.prepared is None or args.anchor_train is None
     ):
-        parser.error("AET requires --prepared and --anchor-train")
+        parser.error("PGT requires --prepared and --anchor-train")
     if args.command == "fit":
         if args.no_anchor and (args.method != "aet" or args.prepared is not None or args.anchor_train is not None):
-            parser.error("--no-anchor applies to AET without --prepared or --anchor-train")
+            parser.error("--no-anchor applies to PGT without --prepared or --anchor-train")
         args.anchor_pad_length = args.anchor_target_length if args.anchor_pad_length is None else args.anchor_pad_length
         if not 0 < args.anchor_target_length <= args.anchor_pad_length:
             parser.error("anchor lengths must satisfy 0 < target-length <= pad-length")
         if args.method != "aet" and args.aggregation_mode != "uot":
-            parser.error("--aggregation-mode only applies to AET")
+            parser.error("--aggregation-mode only applies to PGT")
         if args.pos_weight != "auto":
             try:
                 args.pos_weight = float(args.pos_weight)
@@ -593,22 +593,22 @@ def prepare(args: argparse.Namespace) -> None:
 
 def model_logits(model: nn.Module, method: str, features: Tensor, lengths: Tensor) -> Tensor:
     if method != "aet":
-        raise ValueError("this package supports AET only")
+        raise ValueError("this package supports PGT only")
     output = model(features, lengths)
     return output["logits"] if isinstance(output, dict) else output
 
 
 def mixture_loss(output, labels: Tensor, method: str, pos_weight: Tensor | None = None) -> Tensor:
-    """Weighted binary cross-entropy for AET's website-presence scores."""
+    """Weighted binary cross-entropy for PGT's website-presence scores."""
     if method != "aet":
-        raise ValueError("this package supports AET only")
+        raise ValueError("this package supports PGT only")
     logits = output["logits"] if isinstance(output, dict) else output
     return F.binary_cross_entropy_with_logits(logits, labels, pos_weight=pos_weight)
 
 
 def objective_record(method: str, no_anchor: bool = False) -> dict:
     if method != "aet":
-        raise ValueError("this package supports AET only")
+        raise ValueError("this package supports PGT only")
     return {"loss": "weighted_bce", "pos_weight_applied": True,
             "single_site_supervision": not no_anchor}
 
@@ -720,7 +720,7 @@ def build_model(
         model.prototype_bank.load_state_dict(prepared["prototype_state"])
         return model, model_args, prepared_hash
 
-    raise ValueError("this package supports AET only")
+    raise ValueError("this package supports PGT only")
 
 
 def validate_resume(resumed: dict, expected: dict, args: argparse.Namespace) -> None:

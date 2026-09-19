@@ -1,4 +1,4 @@
-"""AET-WF model package."""
+"""PGT model package."""
 
 from .models import (
     AETWFModel,

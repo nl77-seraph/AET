@@ -1,8 +1,10 @@
-# AET: Anchored Evidence Transport
+# PGT: Prototype-Guided Transport for Practical Multi-Tab Website Fingerprinting
 
-AET detects the monitored websites present in a multi-tab traffic trace. It builds local website prototypes from labeled single-tab traces, matches mixture tokens to website/background prototypes with unbalanced optimal transport, and predicts each website's presence with a shared head. Inference does not require the true tab count.
+PGT detects the monitored websites present in a multi-tab traffic trace. It builds local website prototypes from labeled single-tab traces, matches mixture tokens to website/background prototypes with unbalanced optimal transport, and predicts each website's presence with a shared head. Inference does not require the true tab count.
 
-This repository contains AET and its data/training/evaluation tools. Datasets, pretrained weights, and other methods' implementations are not included.
+This repository contains PGT and its data/training/evaluation tools. Datasets, pretrained weights, and other methods' implementations are not included.
+
+PGT was previously named AET (Anchored Evidence Transport). For compatibility with existing scripts, checkpoints, and datasets, this release retains the `aet_wf` import path and `python -m aet_wf...` CLI, `AETWFModel`, `--method aet`/`method="aet"`, `aet-*` artifact schemas, and deterministic source-split hash seeds. These retained identifiers do not change the algorithm.
 
 ## Installation
 
@@ -27,14 +29,14 @@ python -m aet_wf.audit_data --data-root "$DATA" --output "$DATA/audit.json"
 
 This creates Ordinary and Cross-to-Same protocols, each with train/validation/test NPZ files, `manifest.json`, and `feature_stats.json`; single-tab manifests are shared under `source_manifests/`. Use `--tab-count 3` or `5` for other fixed settings. For 2-tab, mixed-tab, independent test cohorts, and rho experiments, see `python -m aet_wf.protocols --help` and its `train`/`test` subcommands.
 
-## Train AET
+## Train PGT
 
 The example uses the 4-tab Cross-to-Same protocol: Cross train/validation, then Cross and Same test. Select a GPU with `CUDA_VISIBLE_DEVICES`.
 
 ```bash
 export CUDA_VISIBLE_DEVICES=0
 P="$DATA/ow90_4tab_composition_shift_time_v2"
-RUN="$PWD/outputs/aet_4tab"
+RUN="$PWD/outputs/pgt_4tab"
 
 # Phase I: single-tab encoder training and prototype initialization.
 python -m aet_wf.train prepare \
@@ -52,7 +54,7 @@ python -m aet_wf.train fit \
   --output-dir "$RUN/fit" --epochs 100 --batch-size 64 --seed 3407
 ```
 
-These are single-GPU usage examples, not the exact distributed experiment budget. AET additionally uses labeled single-tab supervision. Validation selects the model and calibration; test data are not used for training or selection. `--device cpu` supports small checks; use `--precision float32` for CPU `fit`. Optional AET ablations are `--aggregation-mode independent_local` and `--no-anchor` (omit both `--prepared` and `--anchor-train` for the latter).
+These are single-GPU usage examples, not the exact distributed experiment budget. PGT additionally uses labeled single-tab supervision. Validation selects the model and calibration; test data are not used for training or selection. `--device cpu` supports small checks; use `--precision float32` for CPU `fit`. Optional PGT ablations are `--aggregation-mode independent_local` and `--no-anchor` (omit both `--prepared` and `--anchor-train` for the latter).
 
 ## Predict and score
 
@@ -72,7 +74,7 @@ Scores include class-wise mAP, P@k, and threshold-based set metrics. P@k uses th
 
 ## Source layout and tests
 
-- `src/aet_wf/models.py`: DFNet backbone and all AET model components.
+- `src/aet_wf/models.py`: DFNet backbone and all PGT model components.
 - `train.py`, `data.py`, `predict.py`, `evaluate.py`: training, features, inference, and calibration/set metrics.
 - `build_data.py`, `audit_data.py`, `protocols.py`, `metrics.py`: data protocols, audits, P@k, and multi-seed summaries.
 

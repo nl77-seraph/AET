@@ -1,4 +1,4 @@
-"""Small checks for AET data alignment and train-only feature conversion."""
+"""Small checks for PGT data alignment and train-only feature conversion."""
 
 from __future__ import annotations
 

@@ -63,7 +63,7 @@ class TrafficFeatureAdapter:
 
 
 class MixtureDataset(Dataset):
-    """Memory-mapped ragged AET mixture data."""
+    """Memory-mapped ragged PGT mixture data."""
 
     def __init__(
         self,

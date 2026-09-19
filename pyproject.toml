@@ -3,12 +3,15 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "aet-wf"
+name = "pgt-wf"
 version = "0.1.0"
-description = "Anchored Evidence Transport for multi-tab website fingerprinting"
+description = "Prototype-Guided Transport for Practical Multi-Tab Website Fingerprinting"
 readme = "README.md"
 requires-python = ">=3.10"
 dynamic = ["dependencies"]
+
+[project.urls]
+Repository = "https://github.com/nl77-seraph/PGT"
 
 [tool.setuptools.dynamic]
 dependencies = {file = ["requirements.txt"]}

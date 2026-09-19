@@ -1,4 +1,4 @@
-"""Single-tab-anchored evidence transport for multi-tab recognition."""
+"""Prototype-guided transport for multi-tab website fingerprinting."""
 
 from __future__ import annotations
 
@@ -125,7 +125,7 @@ class MultiScaleTrafficEncoder(nn.Module):
     def __init__(self, input_dim: int = 2, dropout: float = 0.1):
         super().__init__()
         if input_dim != 2:
-            raise ValueError("AET-WF expects direction and log-IAT channels")
+            raise ValueError("PGT expects direction and log-IAT channels")
         self.input_dim = input_dim
         self.backbone = DFNet(dropout)
         old = self.backbone.block1_conv1

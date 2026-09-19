@@ -1,4 +1,4 @@
-"""Minimal correctness check for the complete AET-WF model path."""
+"""Minimal correctness check for the complete PGT model path."""
 
 from __future__ import annotations
 

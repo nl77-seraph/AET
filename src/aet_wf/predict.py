@@ -1,4 +1,4 @@
-"""Run a validation-selected AET checkpoint on its declared test split."""
+"""Run a validation-selected PGT checkpoint on its declared test split."""
 
 from __future__ import annotations
 
@@ -152,7 +152,7 @@ def _load_checkpoint(
     if sha256_file(feature_stats_path) != checkpoint["feature_stats_sha256"]:
         raise ValueError("feature statistics hash does not match checkpoint")
     if checkpoint["method"] != "aet":
-        raise ValueError("this package supports AET checkpoints only")
+        raise ValueError("this package supports PGT checkpoints only")
 
     manifest = _read_json(manifest_path)
     if manifest.get("schema") != "aet-mixture-manifest-v1":
@@ -172,7 +172,7 @@ def _load_checkpoint(
 
 def _build_model(checkpoint: dict) -> nn.Module:
     if checkpoint["method"] != "aet":
-        raise ValueError("this package supports AET checkpoints only")
+        raise ValueError("this package supports PGT checkpoints only")
     model = AETWFModel(**checkpoint["model_args"])
     model.load_state_dict(checkpoint["model"], strict=True)
     return model
@@ -180,7 +180,7 @@ def _build_model(checkpoint: dict) -> nn.Module:
 
 def _logits(model: nn.Module, method: str, features: Tensor, lengths: Tensor) -> Tensor:
     if method != "aet":
-        raise ValueError("this package supports AET only")
+        raise ValueError("this package supports PGT only")
     output = model(features, lengths)
     return output["logits"] if isinstance(output, dict) else output
 
